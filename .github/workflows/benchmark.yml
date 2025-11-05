@@ -1,0 +1,184 @@
+name: Benchmark All Implementations
+
+on:
+  push:
+    branches: [ main, copilot/** ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run daily at 00:00 UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+    
+    - name: Set up Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+    
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    
+    - name: Set up Kotlin
+      run: |
+        sudo snap install --classic kotlin
+    
+    - name: Set up Dart
+      uses: dart-lang/setup-dart@v1
+      with:
+        sdk: 'stable'
+    
+    - name: Run Node.js Benchmark
+      id: node
+      run: |
+        cd tests/node
+        node benchmark.js > ../../benchmark_node.json
+        cat ../../benchmark_node.json
+      continue-on-error: true
+    
+    - name: Run Python Benchmark
+      id: python
+      run: |
+        cd tests/python
+        python3 benchmark.py > ../../benchmark_python.json
+        cat ../../benchmark_python.json
+      continue-on-error: true
+    
+    - name: Run Go Benchmark
+      id: go
+      run: |
+        cd tests/go
+        go mod tidy
+        go run benchmark.go > ../../benchmark_go.json
+        cat ../../benchmark_go.json
+      continue-on-error: true
+    
+    - name: Run Java Benchmark
+      id: java
+      run: |
+        cd tests/java
+        cp ../../core/java/NoTorToday.java .
+        javac NoTorToday.java Benchmark.java
+        java Benchmark > ../../benchmark_java.json
+        cat ../../benchmark_java.json
+      continue-on-error: true
+    
+    - name: Run Kotlin Benchmark
+      id: kotlin
+      run: |
+        cd tests/kotlin
+        kotlinc -include-runtime -d benchmark.jar ../../core/kotlin/NoTorToday.kt benchmark.kt
+        java -jar benchmark.jar > ../../benchmark_kotlin.json
+        cat ../../benchmark_kotlin.json
+      continue-on-error: true
+    
+    - name: Run Dart Benchmark
+      id: dart
+      run: |
+        cd tests/dart
+        dart benchmark.dart > ../../benchmark_dart.json
+        cat ../../benchmark_dart.json
+      continue-on-error: true
+    
+    - name: Generate Benchmark Table
+      run: |
+        python3 << 'EOF'
+        import json
+        import os
+        from datetime import datetime
+
+        # Read benchmark results
+        results = []
+        for lang in ['node', 'python', 'go', 'java', 'kotlin', 'dart']:
+            try:
+                with open(f'benchmark_{lang}.json', 'r') as f:
+                    data = json.load(f)
+                    results.append(data)
+            except:
+                print(f"Warning: Could not read benchmark for {lang}")
+                pass
+
+        if not results:
+            print("No benchmark results available")
+            exit(0)
+
+        # Sort by ops_per_second descending
+        results.sort(key=lambda x: int(x.get('ops_per_second', 0)), reverse=True)
+
+        # Generate markdown table
+        table = "## Performance Benchmark\n\n"
+        table += f"*Last updated: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC*\n\n"
+        table += "| Language | Duration (ms) | Operations | Ops/Second | Exit Nodes |\n"
+        table += "|----------|---------------|------------|------------|------------|\n"
+
+        for r in results:
+            table += f"| {r['language']} | {r['duration_ms']} | {r['operations']:,} | {r['ops_per_second']:,} | {r['exit_nodes_loaded']:,} |\n"
+
+        # Read existing README or create new
+        readme_path = 'README.md'
+        if os.path.exists(readme_path):
+            with open(readme_path, 'r') as f:
+                content = f.read()
+            
+            # Replace or append benchmark section
+            marker = "## Performance Benchmark"
+            if marker in content:
+                # Find the section and replace it
+                start = content.find(marker)
+                # Find the next ## section or end of file
+                next_section = content.find('\n## ', start + 1)
+                if next_section == -1:
+                    content = content[:start] + table
+                else:
+                    content = content[:start] + table + '\n' + content[next_section:]
+            else:
+                # Append to end
+                content += '\n\n' + table
+        else:
+            content = table
+
+        with open(readme_path, 'w') as f:
+            f.write(content)
+        
+        print("Benchmark table generated successfully")
+        EOF
+    
+    - name: Commit Benchmark Results
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add README.md
+        git diff --staged --quiet || git commit -m "Update benchmark results [skip ci]"
+      continue-on-error: true
+    
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.ref }}
+      continue-on-error: true

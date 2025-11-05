@@ -1,0 +1,14 @@
+[package]
+name = "notortoday"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+reqwest = { version = "0.11", features = ["blocking"] }
+
+[lib]
+name = "notortoday"
+path = "src/lib.rs"
+
+# Note: Rust implementation uses reqwest for HTTP requests as the standard library
+# does not include a built-in HTTP client. This is the only external dependency.

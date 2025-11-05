@@ -1,0 +1,93 @@
+name: Run Tests
+
+on:
+  push:
+    branches: [ main, copilot/** ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        language: [node, python, go, java, kotlin, dart]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Node.js
+      if: matrix.language == 'node'
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    
+    - name: Set up Python
+      if: matrix.language == 'python'
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Set up Go
+      if: matrix.language == 'go'
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+    
+    - name: Set up Java
+      if: matrix.language == 'java'
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    
+    - name: Set up Kotlin
+      if: matrix.language == 'kotlin'
+      run: |
+        sudo snap install --classic kotlin
+    
+    - name: Set up Dart
+      if: matrix.language == 'dart'
+      uses: dart-lang/setup-dart@v1
+      with:
+        sdk: 'stable'
+    
+    - name: Run Node.js Tests
+      if: matrix.language == 'node'
+      run: |
+        cd tests/node
+        node test.js
+    
+    - name: Run Python Tests
+      if: matrix.language == 'python'
+      run: |
+        cd tests/python
+        python3 test.py
+    
+    - name: Run Go Tests
+      if: matrix.language == 'go'
+      run: |
+        cd core/go
+        go test -v
+    
+    - name: Run Java Example
+      if: matrix.language == 'java'
+      run: |
+        cd examples/java
+        cp ../../core/java/NoTorToday.java .
+        javac NoTorToday.java ExampleOffline.java
+        java ExampleOffline
+    
+    - name: Run Kotlin Example
+      if: matrix.language == 'kotlin'
+      run: |
+        cd examples/kotlin
+        kotlinc -include-runtime -d example.jar ../../core/kotlin/NoTorToday.kt example_offline.kt
+        java -jar example.jar
+    
+    - name: Run Dart Example
+      if: matrix.language == 'dart'
+      run: |
+        cd examples/dart
+        dart example_offline.dart

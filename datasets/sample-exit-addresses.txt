@@ -1,0 +1,12 @@
+# Sample Tor Exit Node Addresses for Testing
+# This is a subset of real exit addresses for demonstration
+ExitAddress 185.220.101.1 2024-01-01 12:00:00
+ExitAddress 185.220.101.2 2024-01-01 12:00:00
+ExitAddress 185.220.101.3 2024-01-01 12:00:00
+ExitAddress 185.220.102.1 2024-01-01 12:00:00
+ExitAddress 185.220.102.2 2024-01-01 12:00:00
+ExitAddress 95.214.55.43 2024-01-01 12:00:00
+ExitAddress 95.214.55.44 2024-01-01 12:00:00
+ExitAddress 162.247.74.74 2024-01-01 12:00:00
+ExitAddress 162.247.74.75 2024-01-01 12:00:00
+ExitAddress 176.10.99.200 2024-01-01 12:00:00
