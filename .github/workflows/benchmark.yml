@@ -38,6 +38,21 @@ jobs:
         toolchain: stable
         override: true
     
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    
+    - name: Set up Kotlin
+      run: |
+        sudo snap install --classic kotlin
+    
+    - name: Set up Dart
+      uses: dart-lang/setup-dart@v1
+      with:
+        sdk: 'stable'
+    
     - name: Run Node.js Benchmark
       id: node
       run: |
@@ -63,6 +78,32 @@ jobs:
         cat ../../benchmark_go.json
       continue-on-error: true
     
+    - name: Run Java Benchmark
+      id: java
+      run: |
+        cd tests/java
+        javac -d . ../../core/java/NoTorToday.java Benchmark.java
+        java Benchmark > ../../benchmark_java.json
+        cat ../../benchmark_java.json
+      continue-on-error: true
+    
+    - name: Run Kotlin Benchmark
+      id: kotlin
+      run: |
+        cd tests/kotlin
+        kotlinc -include-runtime -d benchmark.jar ../../core/kotlin/NoTorToday.kt benchmark.kt
+        java -jar benchmark.jar > ../../benchmark_kotlin.json
+        cat ../../benchmark_kotlin.json
+      continue-on-error: true
+    
+    - name: Run Dart Benchmark
+      id: dart
+      run: |
+        cd tests/dart
+        dart benchmark.dart > ../../benchmark_dart.json
+        cat ../../benchmark_dart.json
+      continue-on-error: true
+    
     - name: Generate Benchmark Table
       run: |
         python3 << 'EOF'
@@ -72,7 +113,7 @@ jobs:
 
         # Read benchmark results
         results = []
-        for lang in ['node', 'python', 'go']:
+        for lang in ['node', 'python', 'go', 'java', 'kotlin', 'dart']:
             try:
                 with open(f'benchmark_{lang}.json', 'r') as f:
                     data = json.load(f)

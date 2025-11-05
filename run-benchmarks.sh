@@ -36,6 +36,44 @@ else
     echo "✗ Go benchmark failed"
 fi
 
+# Run Java benchmark
+echo "Running Java benchmark..."
+cd tests/java && javac -d . ../../core/java/NoTorToday.java Benchmark.java 2>/dev/null && java Benchmark > ../../benchmark_java.json 2>/dev/null
+cd ../..
+if [ $? -eq 0 ]; then
+    echo "✓ Java benchmark completed"
+else
+    echo "✗ Java benchmark failed"
+fi
+
+# Run Kotlin benchmark (if kotlinc is available)
+if command -v kotlinc &> /dev/null; then
+    echo "Running Kotlin benchmark..."
+    cd tests/kotlin && kotlinc -include-runtime -d benchmark.jar ../../core/kotlin/NoTorToday.kt benchmark.kt 2>/dev/null && java -jar benchmark.jar > ../../benchmark_kotlin.json 2>/dev/null
+    cd ../..
+    if [ $? -eq 0 ]; then
+        echo "✓ Kotlin benchmark completed"
+    else
+        echo "✗ Kotlin benchmark failed"
+    fi
+else
+    echo "⊘ Kotlin compiler not found, skipping"
+fi
+
+# Run Dart benchmark (if dart is available)
+if command -v dart &> /dev/null; then
+    echo "Running Dart benchmark..."
+    cd tests/dart && dart benchmark.dart > ../../benchmark_dart.json 2>/dev/null
+    cd ../..
+    if [ $? -eq 0 ]; then
+        echo "✓ Dart benchmark completed"
+    else
+        echo "✗ Dart benchmark failed"
+    fi
+else
+    echo "⊘ Dart not found, skipping"
+fi
+
 echo ""
 echo "Generating benchmark table..."
 
@@ -47,7 +85,7 @@ from datetime import datetime
 
 # Read benchmark results
 results = []
-for lang in ['node', 'python', 'go']:
+for lang in ['node', 'python', 'go', 'java', 'kotlin', 'dart']:
     try:
         with open(f'benchmark_{lang}.json', 'r') as f:
             data = json.load(f)
