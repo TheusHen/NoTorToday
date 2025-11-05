@@ -1,0 +1,24 @@
+{
+  "name": "notortoday",
+  "version": "1.0.0",
+  "description": "Fast, lightweight library to check if an IP belongs to a Tor exit node",
+  "main": "core/node/NoTorToday.js",
+  "scripts": {
+    "example": "node examples/node/example.js",
+    "benchmark": "node tests/node/benchmark.js"
+  },
+  "keywords": [
+    "tor",
+    "security",
+    "ip",
+    "exit-node",
+    "privacy",
+    "anonymity"
+  ],
+  "author": "",
+  "license": "Unlicense",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TheusHen/NoTorToday.git"
+  }
+}
