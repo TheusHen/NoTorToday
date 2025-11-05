@@ -6,6 +6,8 @@
 
 **NoTorToday** is a fast, lightweight, and universal library to check if an IP address belongs to a known Tor exit node. It works entirely offline after the initial download, with no network calls during lookups.
 
+**[📖 Quick Start Guide](QUICKSTART.md)** | **[🤝 Contributing](CONTRIBUTING.md)** | **[📊 Benchmarks](#performance-benchmark)**
+
 ## 🎯 Features
 
 - ✅ **Universal**: Identical API across multiple languages (Node.js, Python, Go, Rust)
