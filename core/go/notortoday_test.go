@@ -1,7 +1,7 @@
 package notortoday
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -130,5 +130,5 @@ func TestCacheOperations(t *testing.T) {
 	}
 
 	// Cleanup
-	_ = ioutil.WriteFile(nt.cacheFile, []byte(""), 0644)
+	_ = os.WriteFile(nt.cacheFile, []byte(""), 0644)
 }

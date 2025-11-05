@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
 	
 	"github.com/TheusHen/NoTorToday/core/go"
@@ -20,7 +20,7 @@ func main() {
 
 	// Load sample data for testing
 	samplePath := filepath.Join("../../datasets/sample-exit-addresses.txt")
-	data, err := ioutil.ReadFile(samplePath)
+	data, err := os.ReadFile(samplePath)
 	if err != nil {
 		log.Fatal(err)
 	}

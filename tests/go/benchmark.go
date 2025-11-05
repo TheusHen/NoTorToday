@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"time"
@@ -22,7 +21,7 @@ func main() {
 
 	// Load sample data for offline testing
 	samplePath := filepath.Join("../../datasets/sample-exit-addresses.txt")
-	data, err := ioutil.ReadFile(samplePath)
+	data, err := os.ReadFile(samplePath)
 	if err != nil {
 		// Try to update if sample not available
 		if err := checker.UpdateList(); err != nil {

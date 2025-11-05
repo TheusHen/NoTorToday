@@ -2,7 +2,7 @@ package notortoday
 
 import (
 	"bufio"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 	"os"
@@ -72,7 +72,7 @@ func (nt *NoTorToday) downloadTorList() (string, error) {
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}
@@ -121,7 +121,7 @@ func (nt *NoTorToday) GetLastUpdate() *time.Time {
 
 // saveCache saves cache to disk
 func (nt *NoTorToday) saveCache(data string) {
-	ioutil.WriteFile(nt.cacheFile, []byte(data), 0644)
+	os.WriteFile(nt.cacheFile, []byte(data), 0644)
 }
 
 // loadCache loads cache from disk
@@ -130,7 +130,7 @@ func (nt *NoTorToday) loadCache() bool {
 		return false
 	}
 
-	data, err := ioutil.ReadFile(nt.cacheFile)
+	data, err := os.ReadFile(nt.cacheFile)
 	if err != nil {
 		return false
 	}
