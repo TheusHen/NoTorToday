@@ -82,7 +82,8 @@ jobs:
       id: java
       run: |
         cd tests/java
-        javac -d . ../../core/java/NoTorToday.java Benchmark.java
+        cp ../../core/java/NoTorToday.java .
+        javac NoTorToday.java Benchmark.java
         java Benchmark > ../../benchmark_java.json
         cat ../../benchmark_java.json
       continue-on-error: true

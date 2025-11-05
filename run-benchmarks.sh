@@ -38,7 +38,7 @@ fi
 
 # Run Java benchmark
 echo "Running Java benchmark..."
-cd tests/java && javac -d . ../../core/java/NoTorToday.java Benchmark.java 2>/dev/null && java Benchmark > ../../benchmark_java.json 2>/dev/null
+cd tests/java && cp ../../core/java/NoTorToday.java . && javac NoTorToday.java Benchmark.java 2>/dev/null && java Benchmark > ../../benchmark_java.json 2>/dev/null
 cd ../..
 if [ $? -eq 0 ]; then
     echo "✓ Java benchmark completed"

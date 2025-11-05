@@ -379,7 +379,7 @@ cd examples/python && python3 example-offline.py
 cd examples/go && go run example-offline.go
 
 # Java
-cd examples/java && javac ../../core/java/NoTorToday.java ExampleOffline.java && java ExampleOffline
+cd examples/java && cp ../../core/java/NoTorToday.java . && javac NoTorToday.java ExampleOffline.java && java ExampleOffline
 
 # Kotlin
 cd examples/kotlin && kotlinc -include-runtime -d example.jar ../../core/kotlin/NoTorToday.kt example_offline.kt && java -jar example.jar
@@ -403,13 +403,16 @@ All implementations are benchmarked automatically. See the performance compariso
 
 ## Performance Benchmark
 
-*Last updated: 2025-11-05 00:15:50 UTC*
+*Last updated: 2025-11-05 00:58:41 UTC*
 
 | Language | Duration (ms) | Operations | Ops/Second | Exit Nodes |
 |----------|---------------|------------|------------|------------|
-| Go | 0.05 | 5,000 | 103,391,232 | 10 |
-| Python | 0.27 | 5,000 | 18,723,225 | 10 |
-| Node.js | 0.63 | 5,000 | 7,890,007 | 10 |
+| Go | 0.05 | 5,000 | 100,617,793 | 10 |
+| Python | 0.27 | 5,000 | 18,764,120 | 10 |
+| Node.js | 0.58 | 5,000 | 8,667,855 | 10 |
+| Java | 1.43 | 5,000 | 3,499,268 | 10 |
+| Kotlin | 1.67 | 5,000 | 3,000,255 | 10 |
+
 
 ## 🚀 Performance Tips
 

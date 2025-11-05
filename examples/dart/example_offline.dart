@@ -1,5 +1,5 @@
 import 'dart:io';
-import '../../../core/dart/notortoday.dart';
+import '../../core/dart/notortoday.dart';
 
 void main() async {
   print('NoTorToday - Dart Example (Offline Mode)\n');

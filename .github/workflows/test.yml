@@ -75,7 +75,8 @@ jobs:
       if: matrix.language == 'java'
       run: |
         cd examples/java
-        javac ../../core/java/NoTorToday.java ExampleOffline.java
+        cp ../../core/java/NoTorToday.java .
+        javac NoTorToday.java ExampleOffline.java
         java ExampleOffline
     
     - name: Run Kotlin Example
