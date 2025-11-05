@@ -1,0 +1,54 @@
+name: Run Tests
+
+on:
+  push:
+    branches: [ main, copilot/** ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        language: [node, python, go]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Node.js
+      if: matrix.language == 'node'
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    
+    - name: Set up Python
+      if: matrix.language == 'python'
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Set up Go
+      if: matrix.language == 'go'
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+    
+    - name: Run Node.js Tests
+      if: matrix.language == 'node'
+      run: |
+        cd tests/node
+        node test.js
+    
+    - name: Run Python Tests
+      if: matrix.language == 'python'
+      run: |
+        cd tests/python
+        python3 test.py
+    
+    - name: Run Go Tests
+      if: matrix.language == 'go'
+      run: |
+        cd core/go
+        go test -v

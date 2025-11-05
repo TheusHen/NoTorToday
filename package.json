@@ -4,8 +4,10 @@
   "description": "Fast, lightweight library to check if an IP belongs to a Tor exit node",
   "main": "core/node/NoTorToday.js",
   "scripts": {
-    "example": "node examples/node/example.js",
-    "benchmark": "node tests/node/benchmark.js"
+    "example": "node examples/node/example-offline.js",
+    "test": "node tests/node/test.js",
+    "benchmark": "node tests/node/benchmark.js",
+    "bench-all": "./run-benchmarks.sh"
   },
   "keywords": [
     "tor",
